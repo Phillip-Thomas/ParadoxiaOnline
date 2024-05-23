@@ -1,4 +1,4 @@
-# Unreal Engine
+# Unreal Engine general ignores
 Binaries/
 Intermediate/
 Saved/
@@ -26,6 +26,9 @@ DerivedDataCache/
 # Exclude the Build directory
 Build/
 
-# Exclude any bps and uasset files that should not be tracked
-*.uasset
+# Ignore all .umap and .uasset files globally
 *.umap
+*.uasset
+
+# Except the .uasset files in the plugins folder
+!Plugins/GameFeatures/ParadoxiaCore**/*.uasset
