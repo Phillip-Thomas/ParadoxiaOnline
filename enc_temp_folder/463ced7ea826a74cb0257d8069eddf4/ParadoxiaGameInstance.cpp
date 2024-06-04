@@ -45,9 +45,6 @@ void UParadoxiaGameInstance::OnStart()
 		GGameIni
 	);
 
-	UE_LOG(LogPersistence, Verbose, TEXT("APIPath: %s."), *OWS2APIPath)
-	UE_LOG(LogPersistence, Verbose, TEXT("CustomerKEy: %s."), *OWSAPICustomerKey)
-
 		if (bAutoStartPersistence)
 		{
 			if (bRegisterNewUser)
@@ -200,11 +197,10 @@ void UParadoxiaGameInstance::OnLoginAndCreateSessionResponseReceived(FHttpReques
 {
 	FString ErrorMsg;
 	TSharedPtr<FJsonObject> JsonObject;
-	UE_LOG(LogPersistence, Warning, TEXT("Response Received"));
+	UE_LOG(LogPersistence, Warning, TEXT("Your message"));
 	GetJsonObjectFromResponse(Request, Response, bWasSuccessful, "OnLoginAndCreateSessionResponseReceived", ErrorMsg, JsonObject);
 	if (!ErrorMsg.IsEmpty())
 	{
-		UE_LOG(LogPersistence, Warning, TEXT("There was an error 1"));
 		ErrorLoginAndCreateSession(ErrorMsg);
 		return;
 	}
@@ -213,22 +209,15 @@ void UParadoxiaGameInstance::OnLoginAndCreateSessionResponseReceived(FHttpReques
 
 	if (!LoginAndCreateSession->ErrorMessage.IsEmpty())
 	{
-
-		UE_LOG(LogPersistence, Warning, TEXT("There was an error 2"));
 		ErrorLoginAndCreateSession(*LoginAndCreateSession->ErrorMessage);
 		return;
 	}
 
 	if (!LoginAndCreateSession->Authenticated || LoginAndCreateSession->UserSessionGUID.IsEmpty())
 	{
-
-		UE_LOG(LogPersistence, Warning, TEXT("There was an error 3"));
 		ErrorLoginAndCreateSession("Unknown Login Error!  Make sure OWS 2 is running in debug mode in VS 2022 with docker-compose.  Then make sure your OWSAPICustomerKey in DefaultGame.ini matches your CustomerGUID in your database.");
 		return;
 	}
-
-
-	UE_LOG(LogPersistence, Warning, TEXT("About to Notify login and create session"));
 
 	NotifyLoginAndCreateSession(LoginAndCreateSession->UserSessionGUID);
 }

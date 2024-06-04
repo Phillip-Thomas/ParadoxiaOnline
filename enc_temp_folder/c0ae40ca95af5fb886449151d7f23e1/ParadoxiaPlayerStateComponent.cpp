@@ -147,8 +147,6 @@ void UParadoxiaPlayerStateComponent::OnLoginAndCreateSessionResponseReceived(FHt
 		return;
 	}
 
-
-	UE_LOG(LogPersistence, Verbose, TEXT("Server User Session ID: %s."), *LoginAndCreateSession->UserSessionGUID);
 	ActiveUserSessionGUID = LoginAndCreateSession->UserSessionGUID;
 }
 
