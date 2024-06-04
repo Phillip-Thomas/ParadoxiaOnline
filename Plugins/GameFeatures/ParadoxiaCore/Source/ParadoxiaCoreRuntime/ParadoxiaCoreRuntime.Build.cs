@@ -10,15 +10,13 @@ public class ParadoxiaCoreRuntime : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-				// ... add public include paths required here ...
-			}
+            }
 			);
 				
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
-				// ... add other private include paths required here ...
-			}
+            }
 			);
 			
 		
@@ -26,23 +24,47 @@ public class ParadoxiaCoreRuntime : ModuleRules
 			new string[]
 			{
 				"Core",
-				// ... add other public dependencies that you statically link with here ...
-			}
+                "HTTP",
+                "LyraGame",
+                "ModularGameplay",
+                "CommonGame",
+            }
 			);
 			
 		
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"CoreUObject",
+				"InputCore",
+                "Slate",
+                "SlateCore",
+                "RenderCore",
+                "DeveloperSettings",
+                "EnhancedInput",
 				"Engine",
-				"Slate",
-				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
-			}
+				"NetCore",
+				"RHI",
+				"UMG",
+				"CommonUI",
+				"CommonInput",
+				"CommonGame",
+				"CommonUser",
+				"GameSubtitles",
+				"GameplayMessageRuntime",
+				"EngineSettings",
+				"Json",
+				"JsonUtilities",
+				"HTTP",
+				"OWSPlugin",
+                "CoreUObject",
+            }
 			);
-		
-		
+
+		PublicIncludePathModuleNames.AddRange(new string[] {
+			"OWSPlugin",
+			"LyraGame"
+		});
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{

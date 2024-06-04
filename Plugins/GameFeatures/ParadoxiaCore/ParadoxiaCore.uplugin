@@ -32,6 +32,16 @@
 		{
 			"Name": "ShooterExplorer",
 			"Enabled": true
+		},
+		{
+			"Name": "OWSPlugin",
+			"Enabled": true
+		}
+	],
+	"Dependencies": [
+		{
+			"Name": "OWSPlugin",
+			"Type": "Required"
 		}
 	]
 }

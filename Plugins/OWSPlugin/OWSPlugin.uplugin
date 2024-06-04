@@ -1,0 +1,34 @@
+{
+  "FileVersion": 3,
+  "Version": 5,
+  "VersionName": "5.4",
+  "FriendlyName": "OWSPlugin",
+  "Description": "Open World Server",
+  "Category": "Other",
+  "CreatedBy": "Sabre Dart Studios",
+  "CreatedByURL": "https://www.openworldserver.com",
+  "DocsURL": "https://www.openworldserver.com",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EngineVersion": "5.4.1",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "Installed": true,
+  "Modules": [
+    {
+      "Name": "OWSPlugin",
+      "Type": "Runtime",
+      "LoadingPhase": "PreDefault"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "GameplayAbilities",
+      "Enabled": true
+    },
+    {
+      "Name": "ReplicationGraph",
+      "Enabled": true
+    }
+  ]
+}
