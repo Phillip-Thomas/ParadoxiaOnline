@@ -32,12 +32,12 @@ void UParadoxiaGameInstance::OnStart()
 
 	UE_LOG(LogPersistence, Verbose, TEXT("GameInstance OnStart Triggered"))
 
-	GConfig->GetString(
-		TEXT("/Script/EngineSettings.GeneralProjectSettings"),
-		TEXT("OWSAPICUSTOMERKEY"),
-		OWSAPICustomerKey,
-		GGameIni
-	);
+		GConfig->GetString(
+			TEXT("/Script/EngineSettings.GeneralProjectSettings"),
+			TEXT("OWSAPICUSTOMERKEY"),
+			OWSAPICustomerKey,
+			GGameIni
+		);
 
 	GConfig->GetString(
 		TEXT("/Script/EngineSettings.GeneralProjectSettings"),
@@ -49,7 +49,17 @@ void UParadoxiaGameInstance::OnStart()
 	UE_LOG(LogPersistence, Verbose, TEXT("APIPath: %s."), *OWS2APIPath)
 	UE_LOG(LogPersistence, Verbose, TEXT("CustomerKEy: %s."), *OWSAPICustomerKey)
 
-	bRequiresCharacterCreation = false;
+		if (bAutoStartPersistence)
+		{
+			if (bRegisterNewUser)
+			{
+				Register(NewUserID, NewPassword, NewFirstName, NewLastName);
+			}
+			if (bAttemptPersistence)
+			{
+				LoginAndCreateSession(TempUserID, TempPassword);
+			}
+		}
 
 #if WITH_EDITOR
 
@@ -246,7 +256,7 @@ void UParadoxiaGameInstance::OnLoginAndCreateSessionResponseReceived(FHttpReques
 		UE_LOG(LogPersistence, Warning, TEXT("There was an error 2"));
 		ErrorLoginAndCreateSession(*LoginAndCreateSession->ErrorMessage);
 
-		const FGameplayTag LoginTag = FGameplayTag::RequestGameplayTag("UI.Event.Login.Registration.Failure");
+		const FGameplayTag LoginTag = FGameplayTag::RequestGameplayTag("UI.Event.login.Registration.Failure");
 		BroadcastLoginMessage(LoginTag, *ErrorMsg);
 
 		return;
@@ -382,7 +392,7 @@ void UParadoxiaGameInstance::CreateCharacter(FString UserSessionGUID, FString Ch
 	FString PostParameters = "";
 	if (FJsonObjectConverter::UStructToJsonObjectString(CreateCharacterJSONPost, PostParameters))
 	{
-		ProcessOWS2POSTRequest("api/Users/CreateCharacterUsingDefaultCharacterValues", PostParameters, &UParadoxiaGameInstance::OnCreateCharacterResponseReceived);
+		ProcessOWS2POSTRequest("api/Users/CreateCharacterUsingDefaultChracterValues", PostParameters, &UParadoxiaGameInstance::OnCreateCharacterResponseReceived);
 	}
 	else
 	{
@@ -400,7 +410,7 @@ void  UParadoxiaGameInstance::OnCreateCharacterResponseReceived(FHttpRequestPtr 
 
 		if (!FJsonObjectConverter::JsonObjectStringToUStruct(ResponseString, &CreateCharacter, 0, 0))
 		{
-			UE_LOG(LogPersistence, Error,TEXT("Could not deserialize CreateCharacterUsingDefaultValues JSON to CreateCharacter struct!"))
+			UE_LOG(LogPersistence, Error,TEXT("Could no deserialize CreateCharacterUSingDefaultValues JSON to CreateCharacter struct!"))
 
 			const FGameplayTag LoginTag = FGameplayTag::RequestGameplayTag("UI.Event.Login.Registration.Failure");
 			BroadcastLoginMessage(LoginTag, "Unexpected Error Occured, See Logs.");
@@ -446,7 +456,7 @@ void UParadoxiaGameInstance::GetAllCharacters(FString UserSessionGUID)
 		ProcessOWS2POSTRequest("api/Users/GetAllCharacters", PostParameters, &UParadoxiaGameInstance::OnGetAllCharactersResponseReceived);
 	}
 	else {
-		UE_LOG(LogPersistence, Error, TEXT("GetAllCharacters Error serializing GetAllCharactersJSONPost!"))
+		UE_LOG(LogPersistence, Error, TEXT("GetAllCharacters Error serializing GetAllCharactersJSONPOST!"))
 	}
 }
 
@@ -459,7 +469,7 @@ void UParadoxiaGameInstance::OnGetAllCharactersResponseReceived(FHttpRequestPtr 
 
 		if (!FJsonObjectConverter::JsonArrayStringToUStruct(Response->GetContentAsString(), &UserCharacters, 0, 0))
 		{
-			UE_LOG(LogPersistence, Error, TEXT("Could not deserialize GetAllCharacters JSON to USerCharacter Struct!"))
+			UE_LOG(LogPersistence, Error, TEXT("Could no deserialize GetAllCharacters JSON to USerCharacter Struc!"))
 			return;
 		}
 
@@ -503,7 +513,7 @@ void UParadoxiaGameInstance::SetSelectedCharacterAndGetUserSession(FString UserS
 
 	if (FJsonObjectConverter::UStructToJsonObjectString(SetSelectedCharacterAndGetUserSessionJSONPost, PostParameters))
 	{
-		ProcessOWS2POSTRequest("api/Users/SetSelectedCharacterAndGetUserSession", PostParameters, &UParadoxiaGameInstance::OnSetSelectedCharacterAndGetUserSessionResponseReceived);
+		ProcessOWS2POSTRequest("api/Users/SetSelectedCharacterAndGetUerSession", PostParameters, &UParadoxiaGameInstance::OnSetSelectedCharacterAndGetUserSessionResponseReceived);
 	}
 	else
 	{

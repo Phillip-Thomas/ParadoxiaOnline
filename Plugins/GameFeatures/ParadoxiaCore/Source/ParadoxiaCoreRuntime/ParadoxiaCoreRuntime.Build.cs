@@ -28,6 +28,7 @@ public class ParadoxiaCoreRuntime : ModuleRules
                 "LyraGame",
                 "ModularGameplay",
                 "CommonGame",
+				"GameplayTags"
             }
 			);
 			
@@ -51,7 +52,7 @@ public class ParadoxiaCoreRuntime : ModuleRules
 				"CommonUser",
 				"GameSubtitles",
 				"GameplayMessageRuntime",
-				"EngineSettings",
+                "EngineSettings",
 				"Json",
 				"JsonUtilities",
 				"HTTP",
