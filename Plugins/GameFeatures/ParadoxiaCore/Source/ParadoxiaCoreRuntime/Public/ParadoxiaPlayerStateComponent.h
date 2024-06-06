@@ -5,8 +5,32 @@
 #include "Components/ActorComponent.h"
 #include "Runtime/Online/HTTP/Public/Http.h"
 #include "ParadoxiaGameInstance.h"
+#include "Dom/JsonObject.h"
+#include "templates/SharedPointer.h"
+
 #include "OWSCharacter.h"
 #include "ParadoxiaPlayerStateComponent.generated.h"
+
+
+USTRUCT(BlueprintType)
+struct FPersistentInventoryDataStruct
+{
+	GENERATED_BODY()
+};
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FCustomCharacterDataField
+{
+	GENERATED_BODY()
+};
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FCustomCharacterDataFull
+{
+	GENERATED_BODY()
+};
+
+
 
 //Get Zone Server To Travel To
 DECLARE_DELEGATE_OneParam(FNotifyGetZoneServerToTravelToDelegate, const FString&)
@@ -106,6 +130,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player State")
 	APlayerState* GetPlayerState() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Persistence")
+	FString GetActiveUserSessionGUID() { return ActiveUserSessionGUID; }
+
+	UFUNCTION(BlueprintCallable, Category = "Persistence")
+	FString GetActiveSelectedCharacterGUID() { return ActiveSelectedCharacter; }
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
 	bool bAutoStartPersistence = true;
 
@@ -115,6 +145,8 @@ public:
 	FString TestPassword = "TestPassword";
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup, meta = (EditCondition = "bAttemptPersistence"))
 	FString ActiveUserSessionGUID = "";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup, meta = (EditCondition = "bAttemptPersistence"))
+	FString ActiveSelectedCharacter = "";
 
 	//LoginAndCreateSession
 	UFUNCTION(BlueprintCallable, Category = "Login")
@@ -345,6 +377,9 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category= "Login")
+	void ServerConnectToPersistence(const FString& UserSessionGUID, const FString& SelectedCharacter);
 
 	void ProcessOWS2POSTRequest(FString ApiModuleToCall, FString ApiToCall, FString PostParameters, void (UParadoxiaPlayerStateComponent::* InMethodPtr)(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful));
 	void GetPlayerNameAndCharacter(ACharacter* Character, FString& PlayerName);

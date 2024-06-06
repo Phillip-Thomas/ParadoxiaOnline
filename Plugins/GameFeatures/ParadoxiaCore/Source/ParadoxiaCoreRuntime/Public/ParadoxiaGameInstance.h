@@ -151,7 +151,19 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Login")
 	void ErrorExternalLoginAndCreateSession(const FString& ErrorMsg);
 
-	//Register
+
+//----------------------------------------------------------------------------------------------------------
+// get Current
+//----------------------------------------------------------------------------------------------------------
+	UFUNCTION(BlueprintCallable, category = "Character")
+	FString GetClientUserSessionGUID() { return ClientUserSessionGUID; }
+
+	UFUNCTION(BlueprintCallable, category = "Character")
+	FString GetClientSelectedCharacterGUID() { return SelectedCharacter; }
+
+	//----------------------------------------------------------------------------------------------------------
+	// Register
+	//----------------------------------------------------------------------------------------------------------
 	UFUNCTION(BlueprintCallable, Category = "Login")
 	void Register(FString Email, FString Password, FString FirstName, FString LastName);
 

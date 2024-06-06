@@ -11,6 +11,9 @@
 
 #include "Net/UnrealNetwork.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Serialization/JsonSerializer.h"
+
+
 
 // Sets default values for this component's properties
 UParadoxiaPlayerStateComponent::UParadoxiaPlayerStateComponent()
@@ -100,15 +103,46 @@ void UParadoxiaPlayerStateComponent::BeginPlay()
 	UE_LOG(LogPersistence, Verbose, TEXT("ParadoxiaPlayerStateComponent - Activated"));
 
 	APlayerState* PlayerState = Cast<APlayerState>(GetOwner());
-	if (bAutoStartPersistence || PlayerState || PlayerState->GetOwningController())
+	if (bAutoStartPersistence && PlayerState && PlayerState->GetOwningController())
 	{
 		if (PlayerState->GetOwningController()->IsPlayerController())
 		{
-			UE_LOG(LogPersistence, Verbose, TEXT("Requesting server login for persistence"));
-			LoginAndCreateSessionServer(TestEmail, TestPassword);
+				UParadoxiaGameInstance* LyraGameInstance = Cast<UParadoxiaGameInstance>(UGameplayStatics::GetGameInstance(this));
+				if (LyraGameInstance)
+				{
+					UE_LOG(LogPersistence, Verbose, TEXT("Sending session info for persistence."));
+					ServerConnectToPersistence(LyraGameInstance->GetClientUserSessionGUID(),
+						LyraGameInstance->GetClientSelectedCharacterGUID());
+
+					//GetCustomCharacterData(ActiveSelectedCharacter);
+				}
+;
+		}
+		else
+		{
+			//This is a bot
+			DestroyComponent();
 		}
 	}
+	else
+	{
 
+	}
+
+}
+
+void UParadoxiaPlayerStateComponent::ServerConnectToPersistence_Implementation(const FString& UserSessionGUID, const FString& SelectedCharacter)
+{
+	if (!(GetOwner()->GetLocalRole() == ENetRole::ROLE_Authority)) return; // Not so fast server/client???
+
+		ActiveUserSessionGUID = UserSessionGUID;
+		ActiveSelectedCharacter = SelectedCharacter;
+		UE_LOG(LogPersistence, Verbose, TEXT("Server component established user session %s and selected character %s."), *ActiveUserSessionGUID, *ActiveSelectedCharacter);
+}
+
+bool UParadoxiaPlayerStateComponent::ServerConnectToPersistence_Validate(const FString& UserSessionGUID, const FString& SelectedCharacter)
+{
+	return true;
 }
 
 
@@ -116,6 +150,11 @@ void UParadoxiaPlayerStateComponent::BeginPlay()
 
 void UParadoxiaPlayerStateComponent::LoginAndCreateSessionServer(FString Email, FString Password)
 {
+	if (!(GetOwner()->GetLocalRole() == ENetRole::ROLE_Authority)) return;
+
+	ActiveUserSessionGUID = "";
+	ActiveSelectedCharacter = "";
+	
 	FLoginAndCreateSessionJSONPost LoginAndCreateSessionJSONPost(Email, Password);
 	FString PostParameters = "";
 	if (FJsonObjectConverter::UStructToJsonObjectString(LoginAndCreateSessionJSONPost, PostParameters))
